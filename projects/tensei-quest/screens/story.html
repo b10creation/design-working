@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1.0">
+<title>転生クエスト - ストーリー画面</title>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DotGothic16', monospace;
+    background: #000; color: #fff;
+    width: 390px; min-height: 844px;
+    margin: 0 auto; overflow-x: hidden;
+    letter-spacing: 1px; line-height: 1.6;
+  }
+  .dq-window { background: #000; padding: 3px; border-radius: 4px; }
+  .dq-window-border { background: #fff; padding: 2px; border-radius: 3px; }
+  .dq-window-inner { background: #000; padding: 12px 14px; border-radius: 2px; }
+  .status-bar { height: 54px; }
+
+  .page-title-section { padding: 0 12px 8px; }
+  .page-title-section .dq-window-inner { padding: 8px 14px; text-align: center; }
+  .page-title { font-size: 16px; letter-spacing: 4px; }
+
+  /* Story Scene */
+  .story-scene { padding: 0 12px 8px; }
+  .story-scene .dq-window-inner { padding: 0; overflow: hidden; }
+  .scene-bg {
+    height: 200px; background: #000;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .scene-bg::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+    background: repeating-linear-gradient(90deg, #1a5c1a 0px, #1a5c1a 4px, #176017 4px, #176017 8px);
+    border-top: 3px solid #2d8b2d;
+  }
+  .scene-characters {
+    display: flex; gap: 40px; z-index: 1; margin-bottom: 30px;
+  }
+  .scene-char { font-size: 56px; }
+
+  /* Dialog window */
+  .dialog-section { padding: 0 12px 8px; }
+  .dialog-section .dq-window-inner { padding: 14px; min-height: 80px; }
+  .dialog-speaker { font-size: 12px; color: #ffd700; margin-bottom: 6px; }
+  .dialog-text { font-size: 14px; line-height: 1.8; }
+  .dialog-cursor {
+    display: inline-block; width: 0; height: 0;
+    border-left: 5px solid transparent; border-right: 5px solid transparent;
+    border-top: 6px solid #fff; margin-left: 4px; vertical-align: middle;
+  }
+
+  /* Chapter List */
+  .chapter-list { padding: 0 12px 8px; }
+  .chapter-list .dq-window-inner { padding: 14px; }
+  .chapter-title { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+
+  .chapter-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px;
+  }
+  .chapter-item:last-child { border-bottom: none; }
+  .ch-cursor { width: 10px; flex-shrink: 0; }
+  .ch-cursor-arrow {
+    width: 0; height: 0;
+    border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 7px solid #fff;
+  }
+  .ch-num { color: #aaa; flex-shrink: 0; width: 36px; }
+  .ch-name { flex: 1; color: #fff; }
+  .ch-name.locked { color: #555; }
+  .ch-name.current { color: #ffd700; }
+  .ch-name.done { color: #888; }
+  .ch-status { flex-shrink: 0; font-size: 11px; }
+  .ch-status-done { color: #44cc44; }
+  .ch-status-current { color: #ffd700; }
+  .ch-status-locked { color: #555; }
+  .ch-condition { font-size: 10px; color: #888; }
+
+  .nav-spacer { height: 76px; }
+  .bottom-nav-section {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 390px; padding: 6px 12px 20px; background: #000; z-index: 100;
+  }
+  .bottom-nav-section .dq-window-inner { padding: 8px 4px; }
+  .nav-row { display: flex; justify-content: space-around; }
+  .nav-cmd { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 8px; }
+  .nav-cmd-icon { font-size: 18px; }
+  .nav-cmd-label { font-size: 10px; color: #aaa; }
+  .nav-cmd.active .nav-cmd-label { color: #fff; }
+  .nav-cmd.active { position: relative; }
+  .nav-cmd.active::before {
+    content: ''; position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #fff;
+  }
+</style>
+</head>
+<body>
+<div class="status-bar"></div>
+
+<div class="page-title-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="page-title">&#x25C6; ものがたり &#x25C6;</div>
+  </div></div></div>
+</div>
+
+<!-- Story Scene -->
+<div class="story-scene">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="scene-bg">
+      <div class="scene-characters">
+        <span class="scene-char">&#x1F9D1;&#x200D;&#x2694;&#xFE0F;</span>
+        <span class="scene-char">&#x1F9DD;</span>
+      </div>
+    </div>
+  </div></div></div>
+</div>
+
+<!-- Dialog -->
+<div class="dialog-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="dialog-speaker">&#x25C6; むらのちょうろう</div>
+    <div class="dialog-text">
+      ゆうしゃよ　よくぞ きてくれた。<br>
+      このせかいでは しゅうかんこそが ちからとなる。<br>
+      まいにちの クエストを こなし つよくなるのだ。<span class="dialog-cursor"></span>
+    </div>
+  </div></div></div>
+</div>
+
+<!-- Chapter List -->
+<div class="chapter-list">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="chapter-title">&#x25C6; しょう いちらん &#x25C6;</div>
+
+    <div class="chapter-item">
+      <div class="ch-cursor" style="width:10px;"></div>
+      <div class="ch-num">じょしょう</div>
+      <div class="ch-name done">いせかいに めざめる</div>
+      <div class="ch-status"><span class="ch-status-done">&#x2714; かんりょう</span></div>
+    </div>
+
+    <div class="chapter-item">
+      <div class="ch-cursor" style="width:10px;"></div>
+      <div class="ch-num">だい1しょう</div>
+      <div class="ch-name done">さいしょの いっぽ</div>
+      <div class="ch-status"><span class="ch-status-done">&#x2714; かんりょう</span></div>
+    </div>
+
+    <div class="chapter-item">
+      <div class="ch-cursor"><div class="ch-cursor-arrow"></div></div>
+      <div class="ch-num">だい2しょう</div>
+      <div class="ch-name current">ぼうけんしゃギルド</div>
+      <div class="ch-status"><span class="ch-status-current">&#x25C6; いま</span></div>
+    </div>
+
+    <div class="chapter-item">
+      <div class="ch-cursor" style="width:10px;"></div>
+      <div class="ch-num">だい3しょう</div>
+      <div class="ch-name locked">せまりくる かげ</div>
+      <div class="ch-status"><span class="ch-status-locked">&#x1F512;</span></div>
+    </div>
+
+    <div class="chapter-item">
+      <div class="ch-cursor" style="width:10px;"></div>
+      <div class="ch-num">だい4しょう</div>
+      <div class="ch-name locked">しれんの とう</div>
+      <div class="ch-status"><span class="ch-status-locked">&#x1F512;</span></div>
+    </div>
+
+    <div class="chapter-item">
+      <div class="ch-cursor" style="width:10px;"></div>
+      <div class="ch-num">だい5しょう</div>
+      <div class="ch-name locked">しんじつの かくせい</div>
+      <div class="ch-status"><span class="ch-status-locked">&#x1F512;</span></div>
+    </div>
+
+    <div class="chapter-item">
+      <div class="ch-cursor" style="width:10px;"></div>
+      <div class="ch-num">さいしゅうしょう</div>
+      <div class="ch-name locked">まおうとうばつ</div>
+      <div class="ch-status"><span class="ch-status-locked">&#x1F512;</span></div>
+    </div>
+
+  </div></div></div>
+</div>
+
+<div class="nav-spacer"></div>
+<div class="bottom-nav-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="nav-row">
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x2694;&#xFE0F;</span><span class="nav-cmd-label">クエスト</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F4CA;</span><span class="nav-cmd-label">ステータス</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F451;</span><span class="nav-cmd-label">ジョブ</span></div>
+      <div class="nav-cmd active"><span class="nav-cmd-icon">&#x1F4DC;</span><span class="nav-cmd-label">ものがたり</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x2699;&#xFE0F;</span><span class="nav-cmd-label">せってい</span></div>
+    </div>
+  </div></div></div>
+</div>
+</body>
+</html>

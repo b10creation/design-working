@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Working - App Mockups</title>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DotGothic16', monospace;
+    background: #111;
+    color: #fff;
+    min-height: 100vh;
+    padding: 24px 16px;
+    line-height: 1.6;
+    letter-spacing: 1px;
+  }
+  .container { max-width: 600px; margin: 0 auto; }
+  h1 { font-size: 22px; text-align: center; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 32px; }
+  .project-card {
+    display: block;
+    background: #000;
+    border: 2px solid #fff;
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 16px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.15s;
+  }
+  .project-card:active { background: #222; }
+  .project-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .project-icon { font-size: 32px; }
+  .project-title { font-size: 18px; }
+  .project-desc { font-size: 12px; color: #aaa; margin-bottom: 6px; }
+  .project-meta { font-size: 11px; color: #666; }
+  .footer { text-align: center; font-size: 10px; color: #444; margin-top: 40px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Design Working</h1>
+  <p class="subtitle">モバイルアプリ デザインモックアップ</p>
+
+  <a href="projects/tensei-quest/index.html" class="project-card">
+    <div class="project-header">
+      <span class="project-icon">&#x1F409;</span>
+      <span class="project-title">転生クエスト</span>
+    </div>
+    <p class="project-desc">DQスタイル RPG習慣トラッカー</p>
+    <p class="project-meta">7 screens</p>
+  </a>
+
+  <p class="footer">Hosted on GitHub Pages</p>
+</div>
+</body>
+</html>

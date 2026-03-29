@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1.0">
+<title>転生クエスト - ジョブ画面</title>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DotGothic16', monospace;
+    background: #000; color: #fff;
+    width: 390px; min-height: 844px;
+    margin: 0 auto; overflow-x: hidden;
+    letter-spacing: 1px; line-height: 1.6;
+  }
+  .dq-window { background: #000; padding: 3px; border-radius: 4px; }
+  .dq-window-border { background: #fff; padding: 2px; border-radius: 3px; }
+  .dq-window-inner { background: #000; padding: 12px 14px; border-radius: 2px; }
+  .status-bar { height: 54px; }
+
+  .page-title-section { padding: 0 12px 8px; }
+  .page-title-section .dq-window-inner { padding: 8px 14px; text-align: center; }
+  .page-title { font-size: 16px; letter-spacing: 4px; }
+
+  /* Current Job */
+  .current-job-section { padding: 0 12px 8px; }
+  .current-job-section .dq-window-inner { padding: 16px; }
+  .current-job-header { font-size: 12px; color: #aaa; text-align: center; margin-bottom: 10px; }
+  .current-job-display { text-align: center; margin-bottom: 12px; }
+  .job-sprite { font-size: 64px; display: block; margin-bottom: 6px; }
+  .job-name-big { font-size: 18px; color: #ffd700; margin-bottom: 4px; }
+  .job-desc { font-size: 12px; color: #aaa; }
+  .job-bonus { margin-top: 10px; border-top: 1px solid #333; padding-top: 8px; }
+  .job-bonus-title { font-size: 11px; color: #aaa; margin-bottom: 4px; }
+  .job-bonus-row { font-size: 12px; display: flex; justify-content: space-between; padding: 2px 0; }
+  .bonus-plus { color: #44cc44; }
+
+  /* Job List */
+  .job-list-section { padding: 0 12px 8px; }
+  .job-list-section .dq-window-inner { padding: 14px; }
+  .job-list-title { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+
+  .job-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid #1a1a1a;
+  }
+  .job-item:last-child { border-bottom: none; }
+  .job-item-icon { font-size: 32px; flex-shrink: 0; width: 40px; text-align: center; }
+  .job-item-body { flex: 1; }
+  .job-item-name { font-size: 14px; color: #fff; }
+  .job-item-name.locked { color: #555; }
+  .job-item-name.current { color: #ffd700; }
+  .job-item-condition { font-size: 11px; color: #888; margin-top: 2px; }
+  .job-item-condition.met { color: #44cc44; }
+  .job-item-status { font-size: 11px; flex-shrink: 0; }
+  .job-status-current { color: #ffd700; }
+  .job-status-unlocked { color: #44cc44; }
+  .job-status-locked { color: #555; }
+  .job-status-progress { color: #ff9944; }
+
+  /* Cursor */
+  .job-cursor {
+    width: 10px; flex-shrink: 0;
+  }
+  .job-cursor-arrow {
+    width: 0; height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 7px solid #fff;
+  }
+
+  .nav-spacer { height: 76px; }
+  .bottom-nav-section {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 390px; padding: 6px 12px 20px; background: #000; z-index: 100;
+  }
+  .bottom-nav-section .dq-window-inner { padding: 8px 4px; }
+  .nav-row { display: flex; justify-content: space-around; }
+  .nav-cmd { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 8px; }
+  .nav-cmd-icon { font-size: 18px; }
+  .nav-cmd-label { font-size: 10px; color: #aaa; }
+  .nav-cmd.active .nav-cmd-label { color: #fff; }
+  .nav-cmd.active { position: relative; }
+  .nav-cmd.active::before {
+    content: ''; position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #fff;
+  }
+</style>
+</head>
+<body>
+<div class="status-bar"></div>
+
+<div class="page-title-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="page-title">&#x25C6; ジョブ &#x25C6;</div>
+  </div></div></div>
+</div>
+
+<div class="current-job-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="current-job-header">いまのジョブ</div>
+    <div class="current-job-display">
+      <span class="job-sprite">&#x1F9D1;&#x200D;&#x2694;&#xFE0F;</span>
+      <div class="job-name-big">みならいゆうしゃ</div>
+      <div class="job-desc">バランスのとれた しょきジョブ</div>
+    </div>
+    <div class="job-bonus">
+      <div class="job-bonus-title">ステータスほせい</div>
+      <div class="job-bonus-row"><span>ちから</span><span class="bonus-plus">+2</span></div>
+      <div class="job-bonus-row"><span>かしこさ</span><span class="bonus-plus">+1</span></div>
+      <div class="job-bonus-row"><span>たいりょく</span><span class="bonus-plus">+2</span></div>
+      <div class="job-bonus-row"><span>きようさ</span><span class="bonus-plus">+1</span></div>
+      <div class="job-bonus-row"><span>せいしん</span><span class="bonus-plus">+1</span></div>
+    </div>
+  </div></div></div>
+</div>
+
+<div class="job-list-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="job-list-title">&#x25C6; てんしょく &#x25C6;</div>
+
+    <div class="job-item">
+      <div class="job-cursor"><div class="job-cursor-arrow"></div></div>
+      <div class="job-item-icon">&#x1F9D1;&#x200D;&#x2694;&#xFE0F;</div>
+      <div class="job-item-body">
+        <div class="job-item-name current">みならいゆうしゃ</div>
+        <div class="job-item-condition met">しょきジョブ</div>
+      </div>
+      <div class="job-item-status"><span class="job-status-current">&#x25C6;いま</span></div>
+    </div>
+
+    <div class="job-item">
+      <div class="job-cursor" style="width:10px;"></div>
+      <div class="job-item-icon">&#x1F4AA;</div>
+      <div class="job-item-body">
+        <div class="job-item-name">せんし</div>
+        <div class="job-item-condition met">うんどうしゅうかん 7にちれんぞく &#x2714;</div>
+      </div>
+      <div class="job-item-status"><span class="job-status-unlocked">かいほう</span></div>
+    </div>
+
+    <div class="job-item">
+      <div class="job-cursor" style="width:10px;"></div>
+      <div class="job-item-icon">&#x1FA84;</div>
+      <div class="job-item-body">
+        <div class="job-item-name">まほうつかい</div>
+        <div class="job-item-condition">がくしゅうしゅうかん 7にちれんぞく（5/7）</div>
+      </div>
+      <div class="job-item-status"><span class="job-status-progress">5/7</span></div>
+    </div>
+
+    <div class="job-item">
+      <div class="job-cursor" style="width:10px;"></div>
+      <div class="job-item-icon">&#x26EA;</div>
+      <div class="job-item-body">
+        <div class="job-item-name">そうりょ</div>
+        <div class="job-item-condition">すいみん・しょくじしゅうかん 7にちれんぞく（3/7）</div>
+      </div>
+      <div class="job-item-status"><span class="job-status-progress">3/7</span></div>
+    </div>
+
+    <div class="job-item">
+      <div class="job-cursor" style="width:10px;"></div>
+      <div class="job-item-icon">&#x1F94B;</div>
+      <div class="job-item-body">
+        <div class="job-item-name locked">ぶどうか</div>
+        <div class="job-item-condition">せんし Lv5 たっせい</div>
+      </div>
+      <div class="job-item-status"><span class="job-status-locked">&#x1F512;</span></div>
+    </div>
+
+    <div class="job-item">
+      <div class="job-cursor" style="width:10px;"></div>
+      <div class="job-item-icon">&#x1F9D9;</div>
+      <div class="job-item-body">
+        <div class="job-item-name locked">けんじゃ</div>
+        <div class="job-item-condition">まほうつかい Lv5 たっせい</div>
+      </div>
+      <div class="job-item-status"><span class="job-status-locked">&#x1F512;</span></div>
+    </div>
+
+    <div class="job-item">
+      <div class="job-cursor" style="width:10px;"></div>
+      <div class="job-item-icon">&#x1F451;</div>
+      <div class="job-item-body">
+        <div class="job-item-name locked">ゆうしゃ</div>
+        <div class="job-item-condition">すべてのジョブを かいほう</div>
+      </div>
+      <div class="job-item-status"><span class="job-status-locked">&#x1F512;</span></div>
+    </div>
+
+  </div></div></div>
+</div>
+
+<div class="nav-spacer"></div>
+<div class="bottom-nav-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="nav-row">
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x2694;&#xFE0F;</span><span class="nav-cmd-label">クエスト</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F4CA;</span><span class="nav-cmd-label">ステータス</span></div>
+      <div class="nav-cmd active"><span class="nav-cmd-icon">&#x1F451;</span><span class="nav-cmd-label">ジョブ</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F4DC;</span><span class="nav-cmd-label">ものがたり</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x2699;&#xFE0F;</span><span class="nav-cmd-label">せってい</span></div>
+    </div>
+  </div></div></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1.0">
+<title>転生クエスト - 週次ボスバトル画面</title>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DotGothic16', monospace;
+    background: #000; color: #fff;
+    width: 390px; min-height: 844px;
+    margin: 0 auto; overflow-x: hidden;
+    letter-spacing: 1px; line-height: 1.6;
+  }
+  .dq-window { background: #000; padding: 3px; border-radius: 4px; }
+  .dq-window-border { background: #fff; padding: 2px; border-radius: 3px; }
+  .dq-window-inner { background: #000; padding: 12px 14px; border-radius: 2px; }
+
+  /* Full Battle Screen */
+  .boss-battle-area {
+    width: 100%; height: 380px;
+    background: #000; position: relative;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+
+  /* Dark cave ground */
+  .boss-ground {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+    background: repeating-linear-gradient(90deg, #3a2a1a 0px, #3a2a1a 4px, #332618 4px, #332618 8px);
+    border-top: 3px solid #554433;
+  }
+  .boss-ground::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%;
+    background: repeating-linear-gradient(0deg, transparent 0px, transparent 7px, rgba(0,0,0,0.15) 7px, rgba(0,0,0,0.15) 8px);
+  }
+
+  /* Message */
+  .boss-message {
+    position: absolute; top: 12px; left: 12px; right: 12px; z-index: 5;
+  }
+  .boss-message .dq-window-inner { padding: 10px 14px; }
+  .boss-message-text { font-size: 14px; line-height: 1.7; }
+  .message-cursor {
+    display: inline-block; width: 0; height: 0;
+    border-left: 5px solid transparent; border-right: 5px solid transparent;
+    border-top: 6px solid #fff; margin-left: 4px; vertical-align: middle;
+  }
+
+  /* Boss Monster */
+  .boss-container { position: relative; z-index: 2; text-align: center; margin-bottom: 40px; }
+  .boss-sprite { font-size: 120px; display: block; line-height: 1; filter: drop-shadow(0 8px 0 rgba(0,0,0,0.5)); }
+  .boss-name-plate { margin-top: 8px; font-size: 16px; color: #ff4444; letter-spacing: 2px; }
+
+  /* Boss HP */
+  .boss-hp-window {
+    position: absolute; bottom: 76px; left: 12px; right: 12px; z-index: 3;
+  }
+  .boss-hp-window .dq-window-inner { padding: 8px 14px; }
+  .boss-hp-row { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .boss-hp-label { color: #fff; flex-shrink: 0; }
+  .boss-hp-track { flex: 1; height: 10px; background: #333; border: 1px solid #666; }
+  .boss-hp-fill { height: 100%; background: #cc2222; width: 75%; }
+  .boss-hp-nums { color: #ff4444; flex-shrink: 0; font-size: 12px; }
+
+  /* Command Window (DQ battle style) */
+  .cmd-section { padding: 8px 12px; }
+  .cmd-section .dq-window-inner { padding: 10px 14px; }
+  .cmd-title { font-size: 12px; color: #aaa; text-align: center; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+
+  .cmd-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .cmd-option {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 4px; font-size: 14px;
+  }
+  .cmd-arrow {
+    width: 0; height: 0;
+    border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+    border-left: 7px solid #fff;
+  }
+  .cmd-arrow-empty { width: 7px; }
+  .cmd-option-text { color: #fff; }
+
+  /* Skills from habits */
+  .skill-section { padding: 4px 12px; }
+  .skill-section .dq-window-inner { padding: 10px 14px; }
+  .skill-list-title { font-size: 12px; color: #aaa; text-align: center; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+
+  .skill-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px;
+  }
+  .skill-item:last-child { border-bottom: none; }
+  .skill-cursor { width: 10px; flex-shrink: 0; }
+  .skill-cursor-arrow {
+    width: 0; height: 0;
+    border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 7px solid #fff;
+  }
+  .skill-item-name { flex: 1; color: #fff; }
+  .skill-item-power { color: #ff9944; font-size: 11px; flex-shrink: 0; }
+  .skill-item-source { color: #888; font-size: 10px; flex-shrink: 0; }
+
+  /* Party Status */
+  .party-status { padding: 4px 12px 8px; }
+  .party-status .dq-window-inner { padding: 8px 14px; }
+  .party-row { display: flex; justify-content: space-between; font-size: 12px; }
+  .party-name { color: #fff; }
+  .party-hp { color: #fff; }
+  .party-mp { color: #fff; }
+
+  /* Weekly Summary */
+  .weekly-summary { padding: 4px 12px 8px; }
+  .weekly-summary .dq-window-inner { padding: 8px 14px; text-align: center; font-size: 12px; }
+  .weekly-text { color: #aaa; }
+  .weekly-highlight { color: #ffd700; }
+
+  .nav-spacer { height: 10px; }
+</style>
+</head>
+<body>
+
+<!-- Boss Battle Area -->
+<div class="boss-battle-area">
+  <div class="boss-message">
+    <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+      <div class="boss-message-text">
+        しゅうじボス ストーンゴーレムが たちはだかる！<span class="message-cursor"></span>
+      </div>
+    </div></div></div>
+  </div>
+
+  <div class="boss-container">
+    <span class="boss-sprite">&#x1F9CC;</span>
+    <div class="boss-name-plate">ストーンゴーレム</div>
+  </div>
+
+  <div class="boss-hp-window">
+    <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+      <div class="boss-hp-row">
+        <span class="boss-hp-label">BOSS HP</span>
+        <div class="boss-hp-track"><div class="boss-hp-fill"></div></div>
+        <span class="boss-hp-nums">750/1000</span>
+      </div>
+    </div></div></div>
+  </div>
+
+  <div class="boss-ground"></div>
+</div>
+
+<!-- Command Window (DQ style 2x2 grid) -->
+<div class="cmd-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="cmd-title">&#x25C6; コマンド &#x25C6;</div>
+    <div class="cmd-grid">
+      <div class="cmd-option"><div class="cmd-arrow"></div><span class="cmd-option-text">たたかう</span></div>
+      <div class="cmd-option"><div class="cmd-arrow-empty"></div><span class="cmd-option-text">じゅもん</span></div>
+      <div class="cmd-option"><div class="cmd-arrow-empty"></div><span class="cmd-option-text">とくぎ</span></div>
+      <div class="cmd-option"><div class="cmd-arrow-empty"></div><span class="cmd-option-text">ぼうぎょ</span></div>
+    </div>
+  </div></div></div>
+</div>
+
+<!-- Skills from this week's habits -->
+<div class="skill-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="skill-list-title">&#x25C6; こんしゅうの とくぎ &#x25C6;</div>
+    <div class="skill-item">
+      <div class="skill-cursor"><div class="skill-cursor-arrow"></div></div>
+      <span class="skill-item-name">はやぶさぎり</span>
+      <span class="skill-item-power">いりょく 120</span>
+      <span class="skill-item-source">きんトレ&#xD7;7</span>
+    </div>
+    <div class="skill-item">
+      <div class="skill-cursor" style="width:10px;"></div>
+      <span class="skill-item-name">メラミ</span>
+      <span class="skill-item-power">いりょく 85</span>
+      <span class="skill-item-source">どくしょ&#xD7;5</span>
+    </div>
+    <div class="skill-item">
+      <div class="skill-cursor" style="width:10px;"></div>
+      <span class="skill-item-name">ベホイミ</span>
+      <span class="skill-item-power">かいふく 60</span>
+      <span class="skill-item-source">じすい&#xD7;5</span>
+    </div>
+    <div class="skill-item">
+      <div class="skill-cursor" style="width:10px;"></div>
+      <span class="skill-item-name">せいしんとういつ</span>
+      <span class="skill-item-power">バフ +20%</span>
+      <span class="skill-item-source">めいそう&#xD7;3</span>
+    </div>
+    <div class="skill-item">
+      <div class="skill-cursor" style="width:10px;"></div>
+      <span class="skill-item-name">かいしんのいちげき</span>
+      <span class="skill-item-power">いりょく 95</span>
+      <span class="skill-item-source">コード&#xD7;6</span>
+    </div>
+  </div></div></div>
+</div>
+
+<!-- Party Status -->
+<div class="party-status">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="party-row">
+      <span class="party-name">ユウキ</span>
+      <span class="party-hp">H 320/320</span>
+      <span class="party-mp">M 48/60</span>
+    </div>
+  </div></div></div>
+</div>
+
+<!-- Weekly Summary -->
+<div class="weekly-summary">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <span class="weekly-text">こんしゅうの たっせいりつ: </span><span class="weekly-highlight">26 / 35</span><span class="weekly-text"> (74%)</span>
+  </div></div></div>
+</div>
+
+<div class="nav-spacer"></div>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>転生クエスト - Screens</title>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DotGothic16', monospace;
+    background: #111;
+    color: #fff;
+    min-height: 100vh;
+    padding: 24px 16px;
+    line-height: 1.6;
+    letter-spacing: 1px;
+  }
+  .container { max-width: 600px; margin: 0 auto; }
+  .breadcrumb { font-size: 11px; color: #666; margin-bottom: 16px; }
+  .breadcrumb a { color: #888; text-decoration: none; }
+  .breadcrumb a:active { color: #fff; }
+  h1 { font-size: 20px; margin-bottom: 4px; }
+  .desc { font-size: 12px; color: #aaa; margin-bottom: 24px; }
+  .screen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .screen-card {
+    display: block;
+    background: #000;
+    padding: 3px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+  }
+  .screen-card-border {
+    background: #fff;
+    padding: 2px;
+    border-radius: 3px;
+  }
+  .screen-card-inner {
+    background: #000;
+    padding: 14px 12px;
+    border-radius: 2px;
+    text-align: center;
+  }
+  .screen-card:active .screen-card-inner { background: #222; }
+  .screen-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+  .screen-name { font-size: 13px; }
+  .screen-name-en { font-size: 10px; color: #666; margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="breadcrumb"><a href="../../index.html">Design Working</a> &gt; 転生クエスト</div>
+  <h1>転生クエスト</h1>
+  <p class="desc">DQスタイル RPG習慣トラッカー</p>
+
+  <div class="screen-grid">
+    <a href="screens/home.html" class="screen-card">
+      <div class="screen-card-border"><div class="screen-card-inner">
+        <span class="screen-icon">&#x2694;&#xFE0F;</span>
+        <div class="screen-name">ホーム</div>
+        <div class="screen-name-en">home</div>
+      </div></div>
+    </a>
+    <a href="screens/status.html" class="screen-card">
+      <div class="screen-card-border"><div class="screen-card-inner">
+        <span class="screen-icon">&#x1F4CA;</span>
+        <div class="screen-name">ステータス</div>
+        <div class="screen-name-en">status</div>
+      </div></div>
+    </a>
+    <a href="screens/job.html" class="screen-card">
+      <div class="screen-card-border"><div class="screen-card-inner">
+        <span class="screen-icon">&#x1F451;</span>
+        <div class="screen-name">ジョブ</div>
+        <div class="screen-name-en">job</div>
+      </div></div>
+    </a>
+    <a href="screens/habits.html" class="screen-card">
+      <div class="screen-card-border"><div class="screen-card-inner">
+        <span class="screen-icon">&#x1F4D6;</span>
+        <div class="screen-name">しゅうかん</div>
+        <div class="screen-name-en">habits</div>
+      </div></div>
+    </a>
+    <a href="screens/story.html" class="screen-card">
+      <div class="screen-card-border"><div class="screen-card-inner">
+        <span class="screen-icon">&#x1F4DC;</span>
+        <div class="screen-name">ものがたり</div>
+        <div class="screen-name-en">story</div>
+      </div></div>
+    </a>
+    <a href="screens/boss.html" class="screen-card">
+      <div class="screen-card-border"><div class="screen-card-inner">
+        <span class="screen-icon">&#x1F409;</span>
+        <div class="screen-name">ボス</div>
+        <div class="screen-name-en">boss</div>
+      </div></div>
+    </a>
+    <a href="screens/settings.html" class="screen-card">
+      <div class="screen-card-border"><div class="screen-card-inner">
+        <span class="screen-icon">&#x2699;&#xFE0F;</span>
+        <div class="screen-name">せってい</div>
+        <div class="screen-name-en">settings</div>
+      </div></div>
+    </a>
+  </div>
+</div>
+</body>
+</html>

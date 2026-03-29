@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1.0">
+<title>転生クエスト - 習慣管理画面</title>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DotGothic16', monospace;
+    background: #000; color: #fff;
+    width: 390px; min-height: 844px;
+    margin: 0 auto; overflow-x: hidden;
+    letter-spacing: 1px; line-height: 1.6;
+  }
+  .dq-window { background: #000; padding: 3px; border-radius: 4px; }
+  .dq-window-border { background: #fff; padding: 2px; border-radius: 3px; }
+  .dq-window-inner { background: #000; padding: 12px 14px; border-radius: 2px; }
+  .status-bar { height: 54px; }
+
+  .page-title-section { padding: 0 12px 8px; }
+  .page-title-section .dq-window-inner { padding: 8px 14px; text-align: center; }
+  .page-title { font-size: 16px; letter-spacing: 4px; }
+
+  /* Habit Card */
+  .habit-list { padding: 0 12px 8px; }
+  .habit-list .dq-window-inner { padding: 14px; }
+  .habit-list-title { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+
+  .habit-item {
+    padding: 10px 0; border-bottom: 1px solid #1a1a1a;
+  }
+  .habit-item:last-child { border-bottom: none; }
+  .habit-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .habit-cursor { width: 10px; flex-shrink: 0; }
+  .habit-cursor-arrow {
+    width: 0; height: 0;
+    border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 7px solid #fff;
+  }
+  .habit-icon { font-size: 20px; flex-shrink: 0; }
+  .habit-name { font-size: 14px; color: #fff; flex: 1; }
+  .habit-category { font-size: 11px; color: #888; flex-shrink: 0; }
+
+  .habit-detail { padding-left: 20px; font-size: 11px; color: #888; display: flex; gap: 12px; flex-wrap: wrap; }
+  .habit-quest-name { color: #88ccff; }
+  .habit-freq { color: #aaa; }
+  .habit-streak { color: #ff9944; }
+  .habit-xp { color: #88ccff; }
+  .habit-reminder { color: #aaa; }
+
+  /* Add Button */
+  .add-section { padding: 0 12px 8px; }
+  .add-section .dq-window-inner { padding: 12px 14px; text-align: center; cursor: pointer; }
+  .add-text { font-size: 14px; color: #ffd700; }
+
+  /* Backfill Section */
+  .backfill-section { padding: 0 12px 8px; }
+  .backfill-section .dq-window-inner { padding: 14px; }
+  .backfill-title { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+  .backfill-desc { font-size: 12px; color: #888; text-align: center; margin-bottom: 10px; }
+  .backfill-day { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px; }
+  .backfill-day:last-child { border-bottom: none; }
+  .backfill-date { color: #aaa; }
+  .backfill-count { color: #ff9944; }
+  .backfill-action { color: #88ccff; font-size: 12px; }
+  .backfill-done { color: #555; font-size: 12px; }
+
+  .nav-spacer { height: 76px; }
+  .bottom-nav-section {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 390px; padding: 6px 12px 20px; background: #000; z-index: 100;
+  }
+  .bottom-nav-section .dq-window-inner { padding: 8px 4px; }
+  .nav-row { display: flex; justify-content: space-around; }
+  .nav-cmd { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 8px; }
+  .nav-cmd-icon { font-size: 18px; }
+  .nav-cmd-label { font-size: 10px; color: #aaa; }
+  .nav-cmd.active .nav-cmd-label { color: #fff; }
+  .nav-cmd.active { position: relative; }
+  .nav-cmd.active::before {
+    content: ''; position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #fff;
+  }
+</style>
+</head>
+<body>
+<div class="status-bar"></div>
+
+<div class="page-title-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="page-title">&#x25C6; しゅうかんかんり &#x25C6;</div>
+  </div></div></div>
+</div>
+
+<div class="habit-list">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="habit-list-title">&#x25C6; とうろくずみのしゅうかん &#x25C6;　5/10</div>
+
+    <div class="habit-item">
+      <div class="habit-top">
+        <div class="habit-cursor"><div class="habit-cursor-arrow"></div></div>
+        <div class="habit-icon">&#x2694;&#xFE0F;</div>
+        <div class="habit-name">きんトレ 30ぷん</div>
+        <div class="habit-category">ちから</div>
+      </div>
+      <div class="habit-detail">
+        <span class="habit-quest-name">&#x2192; あさのたんれん</span>
+        <span class="habit-freq">まいにち</span>
+        <span class="habit-streak">&#x25B2;12にち</span>
+        <span class="habit-xp">50 EXP</span>
+        <span class="habit-reminder">&#x1F514; 7:00</span>
+      </div>
+    </div>
+
+    <div class="habit-item">
+      <div class="habit-top">
+        <div class="habit-cursor" style="width:10px;"></div>
+        <div class="habit-icon">&#x1F4D6;</div>
+        <div class="habit-name">どくしょ 30ぷん</div>
+        <div class="habit-category">かしこさ</div>
+      </div>
+      <div class="habit-detail">
+        <span class="habit-quest-name">&#x2192; ちしきのしょをよむ</span>
+        <span class="habit-freq">まいにち</span>
+        <span class="habit-streak">&#x25B2;8にち</span>
+        <span class="habit-xp">50 EXP</span>
+        <span class="habit-reminder">&#x1F514; 21:00</span>
+      </div>
+    </div>
+
+    <div class="habit-item">
+      <div class="habit-top">
+        <div class="habit-cursor" style="width:10px;"></div>
+        <div class="habit-icon">&#x1F34E;</div>
+        <div class="habit-name">じすいする</div>
+        <div class="habit-category">たいりょく</div>
+      </div>
+      <div class="habit-detail">
+        <span class="habit-quest-name">&#x2192; せいめいのしょくじ</span>
+        <span class="habit-freq">まいにち</span>
+        <span class="habit-streak">&#x25B2;5にち</span>
+        <span class="habit-xp">50 EXP</span>
+        <span class="habit-reminder">&#x1F514; 18:00</span>
+      </div>
+    </div>
+
+    <div class="habit-item">
+      <div class="habit-top">
+        <div class="habit-cursor" style="width:10px;"></div>
+        <div class="habit-icon">&#x1F9D8;</div>
+        <div class="habit-name">めいそう 10ぷん</div>
+        <div class="habit-category">せいしん</div>
+      </div>
+      <div class="habit-detail">
+        <span class="habit-quest-name">&#x2192; せいしんとういつのしゅぎょう</span>
+        <span class="habit-freq">まいにち</span>
+        <span class="habit-streak">&#x25B2;3にち</span>
+        <span class="habit-xp">50 EXP</span>
+        <span class="habit-reminder">&#x1F514; 22:00</span>
+      </div>
+    </div>
+
+    <div class="habit-item">
+      <div class="habit-top">
+        <div class="habit-cursor" style="width:10px;"></div>
+        <div class="habit-icon">&#x1F4BB;</div>
+        <div class="habit-name">コーディング 1じかん</div>
+        <div class="habit-category">きようさ</div>
+      </div>
+      <div class="habit-detail">
+        <span class="habit-quest-name">&#x2192; ぎこうのたんれん</span>
+        <span class="habit-freq">げつ〜きん</span>
+        <span class="habit-streak">&#x25B2;10にち</span>
+        <span class="habit-xp">50 EXP</span>
+        <span class="habit-reminder">&#x1F514; 9:00</span>
+      </div>
+    </div>
+
+  </div></div></div>
+</div>
+
+<div class="add-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="add-text">&#x2795; あたらしいしゅうかんを とうろく</div>
+  </div></div></div>
+</div>
+
+<div class="backfill-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="backfill-title">&#x25C6; さかのぼりかんりょう &#x25C6;</div>
+    <div class="backfill-desc">かこ3にちいないの みたっせいクエストを かんりょうできる（EXP 50%）</div>
+    <div class="backfill-day">
+      <span class="backfill-date">3/21（きのう）</span>
+      <span class="backfill-count">1けん みたっせい</span>
+      <span class="backfill-action">&#x25B6; かんりょう</span>
+    </div>
+    <div class="backfill-day">
+      <span class="backfill-date">3/20（2にちまえ）</span>
+      <span class="backfill-count">0けん</span>
+      <span class="backfill-done">-</span>
+    </div>
+    <div class="backfill-day">
+      <span class="backfill-date">3/19（3にちまえ）</span>
+      <span class="backfill-count">2けん みたっせい</span>
+      <span class="backfill-action">&#x25B6; かんりょう</span>
+    </div>
+  </div></div></div>
+</div>
+
+<div class="nav-spacer"></div>
+<div class="bottom-nav-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="nav-row">
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x2694;&#xFE0F;</span><span class="nav-cmd-label">クエスト</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F4CA;</span><span class="nav-cmd-label">ステータス</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F451;</span><span class="nav-cmd-label">ジョブ</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F4DC;</span><span class="nav-cmd-label">ものがたり</span></div>
+      <div class="nav-cmd active"><span class="nav-cmd-icon">&#x2699;&#xFE0F;</span><span class="nav-cmd-label">せってい</span></div>
+    </div>
+  </div></div></div>
+</div>
+</body>
+</html>

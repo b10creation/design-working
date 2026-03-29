@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1.0">
+<title>転生クエスト - ステータス画面</title>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DotGothic16', monospace;
+    background: #000; color: #fff;
+    width: 390px; min-height: 844px;
+    margin: 0 auto; overflow-x: hidden;
+    letter-spacing: 1px; line-height: 1.6;
+  }
+  .dq-window { background: #000; padding: 3px; border-radius: 4px; }
+  .dq-window-border { background: #fff; padding: 2px; border-radius: 3px; }
+  .dq-window-inner { background: #000; padding: 12px 14px; border-radius: 2px; }
+
+  .status-bar { height: 54px; }
+
+  /* Page Title */
+  .page-title-section { padding: 0 12px 8px; }
+  .page-title-section .dq-window-inner { padding: 8px 14px; text-align: center; }
+  .page-title { font-size: 16px; letter-spacing: 4px; }
+
+  /* Character Display */
+  .char-display { padding: 0 12px 8px; }
+  .char-display .dq-window-inner { padding: 16px; text-align: center; }
+  .char-sprite { font-size: 80px; display: block; margin-bottom: 8px; image-rendering: pixelated; }
+  .char-name-big { font-size: 20px; margin-bottom: 4px; }
+  .char-job-text { font-size: 13px; color: #aaa; }
+
+  /* Main Status */
+  .main-status { padding: 0 12px 8px; }
+  .main-status .dq-window-inner { padding: 14px; }
+  .stat-line { display: flex; justify-content: space-between; font-size: 14px; padding: 4px 0; border-bottom: 1px solid #1a1a1a; }
+  .stat-line:last-child { border-bottom: none; }
+  .stat-key { color: #aaa; }
+  .stat-val { color: #fff; }
+  .stat-val-gold { color: #ffd700; }
+  .stat-val-blue { color: #88ccff; }
+  .stat-val-orange { color: #ff9944; }
+
+  /* Stats with bars */
+  .stats-detail { padding: 0 12px 8px; }
+  .stats-detail .dq-window-inner { padding: 14px; }
+  .stats-title { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+  .stat-bar-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 13px; }
+  .stat-bar-label { width: 80px; color: #fff; flex-shrink: 0; }
+  .stat-bar-num { width: 30px; text-align: right; color: #fff; flex-shrink: 0; }
+  .stat-bar-track { flex: 1; height: 8px; background: #222; border: 1px solid #555; }
+  .stat-bar-fill { height: 100%; }
+  .stat-bar-fill.str { background: #cc4444; width: 48%; }
+  .stat-bar-fill.int { background: #4488cc; width: 30%; }
+  .stat-bar-fill.vit { background: #44aa44; width: 44%; }
+  .stat-bar-fill.dex { background: #ccaa44; width: 36%; }
+  .stat-bar-fill.spi { background: #aa44cc; width: 24%; }
+
+  /* Equipment */
+  .equip-section { padding: 0 12px 8px; }
+  .equip-section .dq-window-inner { padding: 14px; }
+  .equip-title { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+  .equip-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid #1a1a1a; }
+  .equip-row:last-child { border-bottom: none; }
+  .equip-slot { color: #aaa; }
+  .equip-item { color: #88ccff; }
+  .equip-none { color: #555; }
+
+  /* Skills */
+  .skill-section { padding: 0 12px 8px; }
+  .skill-section .dq-window-inner { padding: 14px; }
+  .skill-title { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+  .skill-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid #1a1a1a; }
+  .skill-row:last-child { border-bottom: none; }
+  .skill-name { color: #fff; }
+  .skill-cost { color: #88ccff; font-size: 11px; }
+
+  .nav-spacer { height: 76px; }
+  .bottom-nav-section {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 390px; padding: 6px 12px 20px; background: #000; z-index: 100;
+  }
+  .bottom-nav-section .dq-window-inner { padding: 8px 4px; }
+  .nav-row { display: flex; justify-content: space-around; }
+  .nav-cmd { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 8px; }
+  .nav-cmd-icon { font-size: 18px; }
+  .nav-cmd-label { font-size: 10px; color: #aaa; }
+  .nav-cmd.active .nav-cmd-label { color: #fff; }
+  .nav-cmd.active { position: relative; }
+  .nav-cmd.active::before {
+    content: ''; position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #fff;
+  }
+</style>
+</head>
+<body>
+<div class="status-bar"></div>
+
+<div class="page-title-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="page-title">&#x25C6; ステータス &#x25C6;</div>
+  </div></div></div>
+</div>
+
+<div class="char-display">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <span class="char-sprite">&#x1F9D1;&#x200D;&#x2694;&#xFE0F;</span>
+    <div class="char-name-big">ユウキ</div>
+    <div class="char-job-text">みならいゆうしゃ</div>
+  </div></div></div>
+</div>
+
+<div class="main-status">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="stat-line"><span class="stat-key">レベル</span><span class="stat-val">7</span></div>
+    <div class="stat-line"><span class="stat-key">HP</span><span class="stat-val">320 / 320</span></div>
+    <div class="stat-line"><span class="stat-key">MP</span><span class="stat-val">48 / 60</span></div>
+    <div class="stat-line"><span class="stat-key">けいけんち</span><span class="stat-val-blue">650 / 1,000</span></div>
+    <div class="stat-line"><span class="stat-key">ゴールド</span><span class="stat-val-gold">1,240 G</span></div>
+    <div class="stat-line"><span class="stat-key">れんぞくクエスト</span><span class="stat-val-orange">12にち</span></div>
+  </div></div></div>
+</div>
+
+<div class="stats-detail">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="stats-title">&#x25C6; つよさ &#x25C6;</div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">ちから</span>
+      <span class="stat-bar-num">24</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill str"></div></div>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">かしこさ</span>
+      <span class="stat-bar-num">15</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill int"></div></div>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">たいりょく</span>
+      <span class="stat-bar-num">22</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill vit"></div></div>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">きようさ</span>
+      <span class="stat-bar-num">18</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill dex"></div></div>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">せいしん</span>
+      <span class="stat-bar-num">12</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill spi"></div></div>
+    </div>
+  </div></div></div>
+</div>
+
+<div class="equip-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="equip-title">&#x25C6; そうび &#x25C6;</div>
+    <div class="equip-row"><span class="equip-slot">ぶき</span><span class="equip-item">てつのつるぎ</span></div>
+    <div class="equip-row"><span class="equip-slot">よろい</span><span class="equip-item">かわのよろい</span></div>
+    <div class="equip-row"><span class="equip-slot">たて</span><span class="equip-none">なし</span></div>
+    <div class="equip-row"><span class="equip-slot">かぶと</span><span class="equip-none">なし</span></div>
+  </div></div></div>
+</div>
+
+<div class="skill-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="skill-title">&#x25C6; とくぎ &#x25C6;</div>
+    <div class="skill-row"><span class="skill-name">ホイミ</span><span class="skill-cost">MP 3</span></div>
+    <div class="skill-row"><span class="skill-name">メラ</span><span class="skill-cost">MP 4</span></div>
+    <div class="skill-row"><span class="skill-name">きあいため</span><span class="skill-cost">MP 0</span></div>
+  </div></div></div>
+</div>
+
+<div class="nav-spacer"></div>
+<div class="bottom-nav-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="nav-row">
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x2694;&#xFE0F;</span><span class="nav-cmd-label">クエスト</span></div>
+      <div class="nav-cmd active"><span class="nav-cmd-icon">&#x1F4CA;</span><span class="nav-cmd-label">ステータス</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F451;</span><span class="nav-cmd-label">ジョブ</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F4DC;</span><span class="nav-cmd-label">ものがたり</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x2699;&#xFE0F;</span><span class="nav-cmd-label">せってい</span></div>
+    </div>
+  </div></div></div>
+</div>
+</body>
+</html>

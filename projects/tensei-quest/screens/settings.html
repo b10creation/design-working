@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1.0">
+<title>転生クエスト - 設定画面</title>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DotGothic16', monospace;
+    background: #000; color: #fff;
+    width: 390px; min-height: 844px;
+    margin: 0 auto; overflow-x: hidden;
+    letter-spacing: 1px; line-height: 1.6;
+  }
+  .dq-window { background: #000; padding: 3px; border-radius: 4px; }
+  .dq-window-border { background: #fff; padding: 2px; border-radius: 3px; }
+  .dq-window-inner { background: #000; padding: 12px 14px; border-radius: 2px; }
+  .status-bar { height: 54px; }
+
+  .page-title-section { padding: 0 12px 8px; }
+  .page-title-section .dq-window-inner { padding: 8px 14px; text-align: center; }
+  .page-title { font-size: 16px; letter-spacing: 4px; }
+
+  /* Settings Group */
+  .settings-group { padding: 0 12px 8px; }
+  .settings-group .dq-window-inner { padding: 14px; }
+  .group-title { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+
+  .setting-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px;
+  }
+  .setting-item:last-child { border-bottom: none; }
+
+  .setting-cursor { width: 10px; flex-shrink: 0; }
+  .setting-cursor-arrow {
+    width: 0; height: 0;
+    border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 7px solid #fff;
+  }
+
+  .setting-label { flex: 1; color: #fff; }
+  .setting-value { color: #88ccff; font-size: 12px; flex-shrink: 0; }
+  .setting-value-on { color: #44cc44; }
+  .setting-value-off { color: #888; }
+  .setting-action { color: #ffd700; font-size: 12px; flex-shrink: 0; }
+
+  /* Toggle */
+  .toggle {
+    width: 36px; height: 18px;
+    border: 2px solid #555; border-radius: 2px;
+    position: relative; flex-shrink: 0;
+    background: #222;
+  }
+  .toggle.on { border-color: #44cc44; background: #1a3a1a; }
+  .toggle-knob {
+    width: 12px; height: 12px;
+    background: #555; position: absolute;
+    top: 1px; left: 1px;
+  }
+  .toggle.on .toggle-knob { background: #44cc44; left: auto; right: 1px; }
+
+  /* Account Info */
+  .account-section { padding: 0 12px 8px; }
+  .account-section .dq-window-inner { padding: 14px; }
+  .account-info { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .account-icon { font-size: 32px; }
+  .account-details { flex: 1; }
+  .account-name { font-size: 14px; color: #fff; }
+  .account-email { font-size: 11px; color: #888; }
+  .account-provider { font-size: 11px; color: #88ccff; margin-top: 2px; }
+
+  /* Version */
+  .version-section { padding: 0 12px 8px; }
+  .version-section .dq-window-inner { padding: 10px 14px; text-align: center; }
+  .version-text { font-size: 11px; color: #555; }
+
+  /* Danger Zone */
+  .danger-section { padding: 0 12px 8px; }
+  .danger-section .dq-window-inner { padding: 14px; }
+  .danger-title { font-size: 13px; color: #ff4444; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #331111; padding-bottom: 6px; }
+  .danger-item { font-size: 13px; color: #ff6666; padding: 6px 0; text-align: center; }
+
+  .nav-spacer { height: 76px; }
+  .bottom-nav-section {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 390px; padding: 6px 12px 20px; background: #000; z-index: 100;
+  }
+  .bottom-nav-section .dq-window-inner { padding: 8px 4px; }
+  .nav-row { display: flex; justify-content: space-around; }
+  .nav-cmd { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 8px; }
+  .nav-cmd-icon { font-size: 18px; }
+  .nav-cmd-label { font-size: 10px; color: #aaa; }
+  .nav-cmd.active .nav-cmd-label { color: #fff; }
+  .nav-cmd.active { position: relative; }
+  .nav-cmd.active::before {
+    content: ''; position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #fff;
+  }
+</style>
+</head>
+<body>
+<div class="status-bar"></div>
+
+<div class="page-title-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="page-title">&#x25C6; せってい &#x25C6;</div>
+  </div></div></div>
+</div>
+
+<!-- Account -->
+<div class="account-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="group-title">&#x25C6; アカウント &#x25C6;</div>
+    <div class="account-info">
+      <div class="account-icon">&#x1F9D1;&#x200D;&#x2694;&#xFE0F;</div>
+      <div class="account-details">
+        <div class="account-name">ユウキ</div>
+        <div class="account-email">yuuki@example.com</div>
+        <div class="account-provider">&#x2714; Google でログインちゅう</div>
+      </div>
+    </div>
+  </div></div></div>
+</div>
+
+<!-- Notification Settings -->
+<div class="settings-group">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="group-title">&#x25C6; つうち &#x25C6;</div>
+    <div class="setting-item">
+      <div class="setting-cursor"><div class="setting-cursor-arrow"></div></div>
+      <span class="setting-label">クエストリマインダー</span>
+      <div class="toggle on"><div class="toggle-knob"></div></div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">よるのリマインド</span>
+      <div class="toggle on"><div class="toggle-knob"></div></div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">リマインドじかん</span>
+      <span class="setting-value">21:00</span>
+    </div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">しゅうじボスつうち</span>
+      <div class="toggle on"><div class="toggle-knob"></div></div>
+    </div>
+  </div></div></div>
+</div>
+
+<!-- Game Settings -->
+<div class="settings-group">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="group-title">&#x25C6; ゲームせってい &#x25C6;</div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">BGM</span>
+      <div class="toggle on"><div class="toggle-knob"></div></div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">こうかおん</span>
+      <div class="toggle on"><div class="toggle-knob"></div></div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">クエストめい じどうへんかん</span>
+      <div class="toggle on"><div class="toggle-knob"></div></div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">しゅうじボスのようび</span>
+      <span class="setting-value">にちようび</span>
+    </div>
+  </div></div></div>
+</div>
+
+<!-- Data -->
+<div class="settings-group">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="group-title">&#x25C6; データ &#x25C6;</div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">クラウドバックアップ</span>
+      <div class="toggle on"><div class="toggle-knob"></div></div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">さいごのどうき</span>
+      <span class="setting-value">きょう 14:30</span>
+    </div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">データのふくげん</span>
+      <span class="setting-action">&#x25B6; じっこう</span>
+    </div>
+  </div></div></div>
+</div>
+
+<!-- Premium -->
+<div class="settings-group">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="group-title">&#x25C6; プレミアム &#x25C6;</div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">プラン</span>
+      <span class="setting-value" style="color:#ffd700;">むりょう</span>
+    </div>
+    <div class="setting-item">
+      <div class="setting-cursor" style="width:10px;"></div>
+      <span class="setting-label">プレミアムに アップグレード</span>
+      <span class="setting-action">&#x25B6; くわしく</span>
+    </div>
+  </div></div></div>
+</div>
+
+<!-- Danger -->
+<div class="danger-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="danger-title">&#x25C6; きけんなそうさ &#x25C6;</div>
+    <div class="danger-item">ログアウト</div>
+    <div class="danger-item">アカウントさくじょ</div>
+  </div></div></div>
+</div>
+
+<div class="version-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="version-text">てんせいクエスト v1.0.0</div>
+  </div></div></div>
+</div>
+
+<div class="nav-spacer"></div>
+<div class="bottom-nav-section">
+  <div class="dq-window"><div class="dq-window-border"><div class="dq-window-inner">
+    <div class="nav-row">
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x2694;&#xFE0F;</span><span class="nav-cmd-label">クエスト</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F4CA;</span><span class="nav-cmd-label">ステータス</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F451;</span><span class="nav-cmd-label">ジョブ</span></div>
+      <div class="nav-cmd"><span class="nav-cmd-icon">&#x1F4DC;</span><span class="nav-cmd-label">ものがたり</span></div>
+      <div class="nav-cmd active"><span class="nav-cmd-icon">&#x2699;&#xFE0F;</span><span class="nav-cmd-label">せってい</span></div>
+    </div>
+  </div></div></div>
+</div>
+</body>
+</html>
