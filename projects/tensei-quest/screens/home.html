@@ -459,44 +459,21 @@
     border-top: 5px solid #fff;
   }
 
-  /* === XP Progress Section === */
-  .xp-section {
-    padding: 4px 12px 4px;
+  /* === Add Quest Button === */
+  .quest-add-btn {
+    border-top: 1px solid #333;
+    border-bottom: none !important;
+    padding-top: 10px;
+    margin-top: 4px;
   }
 
-  .xp-section .dq-window-inner {
-    padding: 8px 14px;
-  }
-
-  .xp-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-  }
-
-  .xp-label-text {
+  .quest-add-btn .cmd-quest-name {
     color: #aaa;
-    flex-shrink: 0;
+    font-size: 14px;
   }
 
-  .xp-bar-track {
-    flex: 1;
-    height: 8px;
-    background: #222;
-    border: 1px solid #555;
-  }
-
-  .xp-bar-fill {
-    height: 100%;
-    width: 65%;
-    background: #4488cc;
-  }
-
-  .xp-numbers {
-    color: #88ccff;
-    flex-shrink: 0;
-    font-size: 11px;
+  .quest-add-btn:active .cmd-quest-name {
+    color: #fff;
   }
 </style>
 </head>
@@ -552,23 +529,6 @@
      MAIN CONTENT: Status + Quests
      ============================================ -->
 <div class="main-content">
-
-  <!-- XP Bar -->
-  <div class="xp-section">
-    <div class="dq-window">
-      <div class="dq-window-border">
-        <div class="dq-window-inner">
-          <div class="xp-row">
-            <span class="xp-label-text">けいけんち</span>
-            <div class="xp-bar-track">
-              <div class="xp-bar-fill"></div>
-            </div>
-            <span class="xp-numbers">650 / 1,000</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Quest Command Window -->
   <div class="quest-window-section">
@@ -650,6 +610,14 @@
               </div>
             </div>
             <div class="cmd-reward"><span class="cmd-reward-coin">+10G</span></div>
+          </div>
+
+          <!-- Add Quest Button -->
+          <div class="quest-cmd quest-add-btn">
+            <div class="cmd-cursor"><div class="cmd-cursor-empty"></div></div>
+            <div class="cmd-body" style="text-align: center;">
+              <div class="cmd-quest-name">+ クエストついか</div>
+            </div>
           </div>
 
         </div>
